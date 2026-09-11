@@ -5,7 +5,30 @@ namespace InMemoryRepositories;
 
 public class CommentInMemoryRepository : ICommentRepository
 {
-    private readonly List<Comment> comments = new();
+    private readonly List<Comment> comments = new()
+    {
+        new Comment
+        {
+            Id = 1,
+            Body = "Great first post!",
+            PostId = 1,
+            UserId = 2
+        },
+        new Comment
+        {
+            Id = 2,
+            Body = "Thanks for sharing.",
+            PostId = 1,
+            UserId = 3
+        },
+        new Comment
+        {
+            Id = 3,
+            Body = "Nice post!",
+            PostId = 2,
+            UserId = 1
+        }
+    };
 
     public Task<Comment> AddAsync(Comment comment)
     {
