@@ -1,5 +1,6 @@
 ﻿using CLI.UI;
 using CLI.UI.ManagePosts;
+using CLI.UI.ManageUsers;
 using InMemoryRepositories;
 using RepositoryContracts;
 
@@ -8,7 +9,9 @@ ICommentRepository commentRepository = new CommentInMemoryRepository();
 IPostRepository postRepository = new PostInMemoryRepository();
 
 CreatePostView createPostView =
-    new CreatePostView(userRepository, postRepository);
+    new CreatePostView(
+        userRepository,
+        postRepository);
 
 ListPostsView listPostsView =
     new ListPostsView(postRepository);
@@ -25,7 +28,20 @@ ManagePostsView managePostsView =
         listPostsView,
         singlePostView);
 
+CreateUserView createUserView =
+    new CreateUserView(userRepository);
+
+ListUsersView listUsersView =
+    new ListUsersView(userRepository);
+
+ManageUsersView manageUsersView =
+    new ManageUsersView(
+        createUserView,
+        listUsersView);
+
 CliApp cliApp =
-    new CliApp(managePostsView);
+    new CliApp(
+        managePostsView,
+        manageUsersView);
 
 await cliApp.StartAsync();
