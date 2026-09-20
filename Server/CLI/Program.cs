@@ -1,12 +1,12 @@
 ﻿using CLI.UI;
 using CLI.UI.ManagePosts;
 using CLI.UI.ManageUsers;
-using InMemoryRepositories;
+using FileRepositories;
 using RepositoryContracts;
 
-IUserRepository userRepository = new UserInMemoryRepository();
-ICommentRepository commentRepository = new CommentInMemoryRepository();
-IPostRepository postRepository = new PostInMemoryRepository();
+IUserRepository userRepository = new UserFileRepository();
+ICommentRepository commentRepository = new CommentFileRepository();
+IPostRepository postRepository = new PostFileRepository();
 
 CreatePostView createPostView =
     new CreatePostView(
