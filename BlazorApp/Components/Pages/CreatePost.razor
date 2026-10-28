@@ -1,0 +1,83 @@
+@page "/create-post"
+@attribute [Authorize]
+@using ApiContracts
+@using BlazorApp.HttpServices
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IPostService PostService
+
+<h3>Create Post</h3>
+
+<EditForm Model="@newPost" OnValidSubmit="@CreatePostAsync">
+    <DataAnnotationsValidator />
+
+    <div>
+        <label>Title:</label>
+        <InputText @bind-Value="newPost.Title" />
+    </div>
+
+    <div>
+        <label>Body:</label>
+        <InputTextArea @bind-Value="newPost.Body" />
+    </div>
+
+    <button type="submit">Create Post</button>
+</EditForm>
+
+<p>@message</p>
+
+@code {
+    [CascadingParameter]
+    public Task<AuthenticationState> State { get; set; } = default!;
+
+    private int userId;
+
+    private CreatePostDto newPost = new()
+    {
+        Title = "",
+        Body = ""
+    };
+
+    private string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authenticationState = await State;
+        ClaimsPrincipal claimsPrincipal = authenticationState.User;
+
+        if (claimsPrincipal.Identity is null ||
+            !claimsPrincipal.Identity.IsAuthenticated)
+        {
+            return;
+        }
+
+        string userIdAsString = claimsPrincipal.Claims
+            .Single(c => c.Type == "Id").Value;
+
+        userId = int.Parse(userIdAsString);
+        newPost.UserId = userId;
+    }
+
+    private async Task CreatePostAsync()
+    {
+        try
+        {
+            newPost.UserId = userId;
+
+            PostDto createdPost = await PostService.AddPostAsync(newPost);
+
+            message = $"Post created successfully! ID: {createdPost.Id}";
+
+            newPost = new CreatePostDto
+            {
+                Title = "",
+                Body = "",
+                UserId = userId
+            };
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+        }
+    }
+}

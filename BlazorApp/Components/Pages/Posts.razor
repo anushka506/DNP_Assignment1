@@ -1,0 +1,51 @@
+@page "/posts"
+@using ApiContracts
+@using BlazorApp.HttpServices
+@inject IPostService PostService
+
+<h3>All Posts</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p>@errorMessage</p>
+}
+else if (posts == null)
+{
+    <p>Loading posts...</p>
+}
+else if (posts.Count == 0)
+{
+    <p>No posts found.</p>
+}
+else
+{
+    @foreach (PostDto post in posts)
+    {
+        <div>
+            <h4>
+                <a href="@($"/posts/{post.Id}")">@post.Title</a>
+            </h4>
+
+            <p>@post.Body</p>
+            <p>Created by User ID: @post.UserId</p>
+            <hr />
+        </div>
+    }
+}
+
+@code {
+    private List<PostDto>? posts;
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            posts = await PostService.GetPostsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading posts: {ex.Message}";
+        }
+    }
+}

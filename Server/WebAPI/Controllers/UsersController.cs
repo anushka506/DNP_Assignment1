@@ -21,10 +21,7 @@ public class UsersController : ControllerBase
     {
         User createdUser = await userRepository.AddAsync(user);
 
-        return CreatedAtAction(
-            nameof(GetSingleAsync),
-            new { id = createdUser.Id },
-            createdUser);
+        return Created($"/api/users/{createdUser.Id}", createdUser);
     }
 
     // GET SINGLE
