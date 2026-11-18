@@ -22,21 +22,26 @@ builder.Services.AddScoped(sp =>
 
 // Register User Service
 builder.Services.AddScoped<IUserService>(sp =>
-    new HttpUserService(sp.GetRequiredService<IHttpClientFactory>()
-        .CreateClient("WebAPI")));
+    new HttpUserService(
+        sp.GetRequiredService<IHttpClientFactory>()
+            .CreateClient("WebAPI")));
 
 // Register Post Service
 builder.Services.AddScoped<IPostService>(sp =>
-    new HttpPostService(sp.GetRequiredService<IHttpClientFactory>()
-        .CreateClient("WebAPI")));
+    new HttpPostService(
+        sp.GetRequiredService<IHttpClientFactory>()
+            .CreateClient("WebAPI")));
 
 // Register Comment Service
 builder.Services.AddScoped<ICommentService>(sp =>
-    new HttpCommentService(sp.GetRequiredService<IHttpClientFactory>()
-        .CreateClient("WebAPI")));
+    new HttpCommentService(
+        sp.GetRequiredService<IHttpClientFactory>()
+            .CreateClient("WebAPI")));
 
 // Authentication
+builder.Services.AddAuthentication();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 
 var app = builder.Build();
@@ -45,16 +50,19 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days.
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseStatusCodePagesWithReExecute(
+    "/not-found",
+    createScopeForStatusCodePages: true);
+
 app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
